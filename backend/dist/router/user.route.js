@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const user_controller_1 = require("../controllers/user.controller");
+const isAuthenticated_1 = __importDefault(require("../middlewares/isAuthenticated"));
+const router = express_1.default.Router();
+router.route('/register').post(user_controller_1.register);
+router.route('/signin').post(user_controller_1.signin);
+router.route('/logout').get(user_controller_1.logout);
+router.route('/dashboard').get(user_controller_1.getdashboard);
+router.route('/dashboard/getbasic/:id').get(user_controller_1.getBasic);
+router.route('/dashboard/addbasic').post(isAuthenticated_1.default, user_controller_1.addBasic);
+router.route('/dashboard/getthanks/:id').get(user_controller_1.getThanks);
+router.route('/dashboard/addthanks/:id').post(user_controller_1.addThanks);
+router.route('/dashboard/getsettings/:id').get(user_controller_1.getSettings);
+router.route('/dashboard/addsettings/:id').post(user_controller_1.addSettings);
+exports.default = router;
