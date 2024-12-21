@@ -5,6 +5,7 @@ import TestimonialForm from './TestimonialForm';
 
 
 interface DashboardBasic{
+  space_id: string;
     space_name: string;
     space_logo: string;
     title: string;

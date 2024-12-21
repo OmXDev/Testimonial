@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.submitTestimonial = exports.generateSpaceLink = exports.getSpaceData = exports.getSpaceId = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const user_model_1 = __importDefault(require("../models/user.model"));
+const testimonial_model_1 = require("../models/testimonial.model");
 // export const getSpaceId = async (req:AuthenticatedRequest,res:Response):Promise<void>=>{
 //     try {
 //         const userId = req.userId;
@@ -223,21 +224,36 @@ const generateSpaceLink = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.generateSpaceLink = generateSpaceLink;
 const submitTestimonial = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { spaceId } = req.params;
-        const testimonialData = req.body;
-        const user = yield user_model_1.default.findOneAndUpdate({ 'dashboard.basic._id': spaceId }, { $push: { 'dashboard.basic.testimonials': testimonialData } }, { new: true });
-        if (!user) {
-            res.status(404).json({
-                success: false,
-                message: 'Space not found'
-            });
+        const { spaceId, rating, answers, name, email, title_company, social_link, address, custom_info } = req.body;
+        // Validate required fields
+        if (!spaceId || !answers || !Array.isArray(answers)) {
+            res.status(400).json({ success: false, message: 'Invalid testimonial data' });
             return;
         }
-        res.json({ success: true, message: 'Testimonial Submitted Successfully' });
+        // Create a new testimonial document
+        const newTestimonial = {
+            spaceId,
+            rating,
+            answers,
+            name,
+            email,
+            title_company,
+            social_link,
+            address,
+            custom_info,
+            submittedAt: new Date()
+        };
+        // Save the testimonial to the database
+        const savedTestimonial = yield testimonial_model_1.TestimonialModel.create(newTestimonial);
+        res.status(201).json({
+            success: true,
+            message: 'Testimonial submitted successfully',
+            testimonial: savedTestimonial
+        });
     }
     catch (error) {
-        console.log('Error Submitting Testimonials', error);
-        res.status(500).json({ success: false, message: 'Server Error' });
+        console.error('Error submitting testimonial:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
 exports.submitTestimonial = submitTestimonial;

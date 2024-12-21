@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import User from "../models/user.model";
+import { Testimonial, TestimonialModel } from '../models/testimonial.model';
 // import { CustomRequest } from '../middlewares/isAuthenticated';
 
 interface AuthenticatedRequest extends Request {
@@ -254,26 +255,51 @@ export const generateSpaceLink = async (req: Request, res: Response): Promise<vo
 
 export const submitTestimonial = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { spaceId } = req.params;
-        const testimonialData = req.body;
-
-        const user = await User.findOneAndUpdate(
-            { 'dashboard.basic._id': spaceId },
-            { $push: { 'dashboard.basic.testimonials': testimonialData } },
-            { new: true }
-        )
-
-        if (!user) {
-            res.status(404).json({
-                success: false,
-                message: 'Space not found'
-            })
-            return;
-        }
-
-        res.json({ success: true, message: 'Testimonial Submitted Successfully' })
+      const {
+        spaceId,
+        rating,
+        answers,
+        name,
+        email,
+        title_company,
+        social_link,
+        address,
+        custom_info
+      } = req.body;
+  
+      // Validate required fields
+      if (!spaceId || !answers || !Array.isArray(answers)) {
+        res.status(400).json({ success: false, message: 'Invalid testimonial data' });
+        return;
+      }
+  
+      // Create a new testimonial document
+      const newTestimonial: Testimonial = {
+        spaceId,
+        rating,
+        answers,
+        name,
+        email,
+        title_company,
+        social_link,
+        address,
+        custom_info,
+        submittedAt: new Date()
+      };
+  
+      // Save the testimonial to the database
+      const savedTestimonial = await TestimonialModel.create(newTestimonial);
+  
+      res.status(201).json({
+        success: true,
+        message: 'Testimonial submitted successfully',
+        testimonial: savedTestimonial
+      });
     } catch (error) {
-        console.log('Error Submitting Testimonials', error);
-        res.status(500).json({ success: false, message: 'Server Error' })
+      console.error('Error submitting testimonial:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
     }
-}
+  };
+  
+
+

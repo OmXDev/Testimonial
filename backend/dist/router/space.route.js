@@ -10,5 +10,5 @@ const router = express_1.default.Router();
 router.route('space-id').get(space_controller_1.getSpaceId);
 router.route('/space-data').get(isAuthenticated_1.default, space_controller_1.getSpaceData);
 router.route('/generate-link').post(isAuthenticated_1.default, space_controller_1.generateSpaceLink);
-router.route('/:spaceId/submit-testimonial').post(space_controller_1.submitTestimonial);
+router.route('/submit-testimonial').post(space_controller_1.submitTestimonial);
 exports.default = router;

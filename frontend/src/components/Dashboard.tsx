@@ -123,6 +123,7 @@ import TestimonialForm from './TestimonialForm';
 import { Link } from 'react-router-dom';
 
 interface DashboardBasic {
+  space_id:string;
   space_name: string;
   space_logo: string;
   title: string;
@@ -175,7 +176,7 @@ const Dashboard: React.FC = () => {
   //     setIsOpenForm(true);
   //   } catch (error) {
   //     console.error('Error fetching space data:', error);
-  //   }
+  //   }http://localhost:5173/testimonial/m4v48e7sklvype5juan
   // };
 
   const generateTestimonialLink= async():Promise<void>=>{
@@ -254,5 +255,4 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
-
 
